@@ -1,0 +1,376 @@
+<title>East Lansing Higher Ed Dashboard</title>
+<style>
+  .viz-root {
+    --surface-1:      #fcfcfb;
+    --page-plane:     #f9f9f7;
+    --text-primary:   #0b0b0b;
+    --text-secondary: #52514e;
+    --text-muted:     #898781;
+    --gridline:       #e1e0d9;
+    --baseline:       #c3c2b7;
+    --border:         rgba(11,11,11,0.10);
+    --series-1:       #2a78d6; /* blue */
+    --series-2:       #1baf7a; /* aqua */
+    --series-3:       #eda100; /* yellow */
+    --series-5:       #4a3aa7; /* violet */
+    --status-good:    #0ca30c;
+    font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+    background: var(--page-plane);
+    color: var(--text-primary);
+    padding: 32px 20px 48px;
+    max-width: 980px;
+    margin: 0 auto;
+  }
+  @media (prefers-color-scheme: dark) {
+    .viz-root {
+      --surface-1:      #1a1a19;
+      --page-plane:     #0d0d0d;
+      --text-primary:   #ffffff;
+      --text-secondary: #c3c2b7;
+      --text-muted:     #898781;
+      --gridline:       #2c2c2a;
+      --baseline:       #383835;
+      --border:         rgba(255,255,255,0.10);
+      --series-1:       #3987e5;
+      --series-2:       #199e70;
+      --series-3:       #c98500;
+      --series-5:       #9085e9;
+      --status-good:    #0ca30c;
+    }
+  }
+  .viz-root[data-theme="dark"] {
+    --surface-1:      #1a1a19;
+    --page-plane:     #0d0d0d;
+    --text-primary:   #ffffff;
+    --text-secondary: #c3c2b7;
+    --text-muted:     #898781;
+    --gridline:       #2c2c2a;
+    --baseline:       #383835;
+    --border:         rgba(255,255,255,0.10);
+    --series-1:       #3987e5;
+    --series-2:       #199e70;
+    --series-3:       #c98500;
+    --status-good:    #0ca30c;
+    --series-5:       #9085e9;
+  }
+  .viz-root[data-theme="light"] {
+    --surface-1:      #fcfcfb;
+    --page-plane:     #f9f9f7;
+    --text-primary:   #0b0b0b;
+    --text-secondary: #52514e;
+    --text-muted:     #898781;
+    --gridline:       #e1e0d9;
+    --baseline:       #c3c2b7;
+    --border:         rgba(11,11,11,0.10);
+    --series-1:       #2a78d6;
+    --series-2:       #1baf7a;
+    --series-3:       #eda100;
+    --series-5:       #4a3aa7;
+    --status-good:    #0ca30c;
+  }
+
+  .majors-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .majors-table th, .majors-table td { text-align: left; padding: 10px 10px; border-bottom: 1px solid var(--gridline); vertical-align: top; }
+  .majors-table th { color: var(--text-muted); font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: .03em; }
+  .majors-table td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .rank-chip {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    background: var(--gridline);
+    color: var(--text-secondary);
+    font-size: 11px;
+    font-weight: 700;
+  }
+  .notable-flag {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--status-good);
+    white-space: nowrap;
+  }
+  .major-note { color: var(--text-secondary); font-size: 12px; }
+
+  .eyebrow { font-size: 13px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--text-muted); margin: 0 0 6px; }
+  h1 { font-size: 26px; margin: 0 0 4px; }
+  .subtitle { color: var(--text-secondary); font-size: 15px; margin: 0 0 28px; }
+
+  .stat-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-bottom: 28px; }
+  .stat-tile {
+    background: var(--surface-1);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 18px;
+  }
+  .stat-label { font-size: 12px; color: var(--text-muted); margin: 0 0 8px; }
+  .stat-value { font-size: 28px; font-weight: 600; margin: 0; line-height: 1.1; }
+  .stat-sub { font-size: 12px; color: var(--text-secondary); margin: 6px 0 0; }
+
+  .card {
+    background: var(--surface-1);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px 22px 22px;
+    margin-bottom: 16px;
+  }
+  .card h2 { font-size: 15px; margin: 0 0 4px; }
+  .card .card-sub { font-size: 12px; color: var(--text-muted); margin: 0 0 18px; }
+
+  .compare-bar { position: relative; }
+  .bar-track {
+    display: flex;
+    height: 28px;
+    border-radius: 4px;
+    overflow: hidden;
+    background: var(--gridline);
+  }
+  .bar-seg {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    position: relative;
+    cursor: default;
+  }
+  .bar-seg:first-child { border-radius: 4px 0 0 4px; }
+  .bar-seg:last-child { border-radius: 0 4px 4px 0; }
+  .bar-seg + .bar-seg { margin-left: 2px; }
+  .bar-seg .seg-label {
+    color: #fff;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 0 10px;
+    white-space: nowrap;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.35);
+  }
+  .bar-seg[data-tip]:hover::after {
+    content: attr(data-tip);
+    position: absolute;
+    bottom: 34px;
+    left: 0;
+    background: var(--text-primary);
+    color: var(--surface-1);
+    font-size: 11px;
+    font-weight: 500;
+    padding: 5px 8px;
+    border-radius: 6px;
+    white-space: nowrap;
+    z-index: 2;
+  }
+  .legend { display: flex; gap: 18px; margin-top: 10px; }
+  .legend-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text-secondary); }
+  .legend-swatch { width: 10px; height: 10px; border-radius: 2px; display: inline-block; }
+
+  .badge {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 999px;
+    background: var(--series-1);
+    color: #fff;
+  }
+
+  table.data-table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 10px; }
+  table.data-table th, table.data-table td { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--gridline); }
+  table.data-table th { color: var(--text-muted); font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: .03em; }
+  .table-toggle {
+    font-size: 12px;
+    color: var(--series-1);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    text-decoration: underline;
+  }
+  .table-wrap { display: none; margin-top: 14px; }
+  .table-wrap.open { display: block; }
+
+  .note {
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.5;
+  }
+  .note strong { color: var(--text-primary); }
+
+  .sources { font-size: 12px; color: var(--text-muted); margin-top: 24px; }
+  .sources a { color: var(--text-muted); }
+  .sources ul { margin: 6px 0 0; padding-left: 18px; }
+</style>
+
+<div class="viz-root">
+  <p class="eyebrow">East Lansing, MI · Higher Education</p>
+  <h1>East Lansing HQ Dashboard</h1>
+  <p class="subtitle">Michigan State University is the only degree-granting institution located within East Lansing city limits · Fall 2025 snapshot</p>
+
+  <div class="stat-row">
+    <div class="stat-tile">
+      <p class="stat-label">Total enrollment</p>
+      <p class="stat-value">51,838</p>
+      <p class="stat-sub">near-record, Fall 2025</p>
+    </div>
+    <div class="stat-tile">
+      <p class="stat-label">Undergraduate</p>
+      <p class="stat-value">41,415</p>
+      <p class="stat-sub">largest on record</p>
+    </div>
+    <div class="stat-tile">
+      <p class="stat-label">Graduate / professional</p>
+      <p class="stat-value">~7,500</p>
+      <p class="stat-sub">Fall 2025</p>
+    </div>
+    <div class="stat-tile">
+      <p class="stat-label">Student : faculty ratio</p>
+      <p class="stat-value">17:1</p>
+      <p class="stat-sub"><span class="badge">Public</span></p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Gender split</h2>
+    <p class="card-sub">24,439 male · 27,650 female</p>
+    <div class="compare-bar">
+      <div class="bar-track">
+        <div class="bar-seg" style="width: 46.9%; background: var(--series-1);" data-tip="Male — 24,439 (46.9%)">
+          <span class="seg-label">Male 46.9%</span>
+        </div>
+        <div class="bar-seg" style="width: 53.1%; background: var(--series-2);" data-tip="Female — 27,650 (53.1%)">
+          <span class="seg-label">Female 53.1%</span>
+        </div>
+      </div>
+      <div class="legend">
+        <div class="legend-item"><span class="legend-swatch" style="background: var(--series-1);"></span>Male</div>
+        <div class="legend-item"><span class="legend-swatch" style="background: var(--series-2);"></span>Female</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Housing: on-campus vs. off-campus</h2>
+    <p class="card-sub">41% in university-owned or -affiliated housing · 59% off campus</p>
+    <div class="compare-bar">
+      <div class="bar-track">
+        <div class="bar-seg" style="width: 41%; background: var(--series-5);" data-tip="On-campus — 41%">
+          <span class="seg-label">On-campus 41%</span>
+        </div>
+        <div class="bar-seg" style="width: 59%; background: var(--series-3);" data-tip="Off-campus — 59%">
+          <span class="seg-label">Off-campus 59%</span>
+        </div>
+      </div>
+      <div class="legend">
+        <div class="legend-item"><span class="legend-swatch" style="background: var(--series-5);"></span>On-campus housing</div>
+        <div class="legend-item"><span class="legend-swatch" style="background: var(--series-3);"></span>Off-campus</div>
+      </div>
+    </div>
+    <p class="note" style="margin-top: 12px;">MSU is a hybrid campus — a majority of students live off campus, but it retains the residential, walkable feel of a classic college town rather than reading as a pure commuter school.</p>
+  </div>
+
+  <button class="table-toggle" id="tableToggle" onclick="document.getElementById('tableWrap').classList.toggle('open'); this.textContent = document.getElementById('tableWrap').classList.contains('open') ? 'Hide table view' : 'View as table';">View as table</button>
+  <div class="table-wrap" id="tableWrap">
+    <table class="data-table">
+      <thead>
+        <tr><th>Metric</th><th>Value</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Type</td><td>Public</td></tr>
+        <tr><td>Total enrollment</td><td>51,838</td></tr>
+        <tr><td>Undergraduate</td><td>41,415</td></tr>
+        <tr><td>Graduate / professional</td><td>~7,500</td></tr>
+        <tr><td>Male</td><td>24,439 (46.9%)</td></tr>
+        <tr><td>Female</td><td>27,650 (53.1%)</td></tr>
+        <tr><td>Student : faculty ratio</td><td>17:1</td></tr>
+        <tr><td>On-campus housing</td><td>41%</td></tr>
+        <tr><td>Off-campus</td><td>59%</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <h2>Top 5 majors at MSU</h2>
+    <p class="card-sub">Ranked by bachelor's degrees awarded per year (most recent completions data)</p>
+    <div style="overflow-x: auto;">
+      <table class="majors-table">
+        <thead>
+          <tr>
+            <th>Rank</th>
+            <th>Major</th>
+            <th>Degrees / yr</th>
+            <th>Famous or awarded?</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="rank-chip">1</span></td>
+            <td>Business Administration, Management &amp; Operations</td>
+            <td class="num">~638</td>
+            <td>
+              <div class="notable-flag">✓ Nationally ranked</div>
+              <div class="major-note">Eli Broad College of Business is AACSB-accredited; its Supply Chain Management program has ranked #1 in the nation for 15 straight years.</div>
+            </td>
+          </tr>
+          <tr>
+            <td><span class="rank-chip">2</span></td>
+            <td>Biology, General</td>
+            <td class="num">~612</td>
+            <td>
+              <div class="notable-flag">✓ Nationally ranked</div>
+              <div class="major-note">Feeds into MSU's top-ranked public-university programs in Plant &amp; Animal Science and Agricultural/Biological Science (US News Best Global Universities).</div>
+            </td>
+          </tr>
+          <tr>
+            <td><span class="rank-chip">3</span></td>
+            <td>Psychology, General</td>
+            <td class="num">~587</td>
+            <td>
+              <div class="notable-flag">✓ Nationally ranked</div>
+              <div class="major-note">MSU's Organizational Psychology program is ranked #1 in the US; Ecological/Community Psychology is a distinctive, nationally known specialization.</div>
+            </td>
+          </tr>
+          <tr>
+            <td><span class="rank-chip">4</span></td>
+            <td>Public Relations, Advertising &amp; Applied Communication</td>
+            <td class="num">~520</td>
+            <td>
+              <div class="notable-flag">✓ Nationally ranked</div>
+              <div class="major-note">ComArtSci's Advertising + PR programs (undergrad and grad) consistently rank in the nation's top 3.</div>
+            </td>
+          </tr>
+          <tr>
+            <td><span class="rank-chip">5</span></td>
+            <td>Medicine (MD/DO completions)</td>
+            <td class="num">~454</td>
+            <td>
+              <div class="notable-flag">✓ Nationally ranked</div>
+              <div class="major-note">MSU's College of Osteopathic Medicine ranks #2 among DO schools nationally and was the first osteopathic college founded at a public university.</div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="note" style="margin-top: 14px;">Note: IPEDS completions data also shows a much larger "Multi-Disciplinary Studies" catch-all category (13,000+ completions) — excluded here since it's an umbrella/general-studies grouping rather than a specific major.</p>
+  </div>
+
+  <div class="card" style="margin-top: 16px;">
+    <h2>Other East Lansing sites</h2>
+    <p class="note"><strong>Lansing Community College – East Campus</strong> (2827 Eyde Pkwy) is a satellite instructional site, not an independent institution — its students, faculty, and housing figures roll up into Lansing Community College as a whole (main campus in downtown Lansing). LCC has no student housing at any site and is a fully commuter institution.</p>
+  </div>
+
+  <div class="sources">
+    Sources
+    <ul>
+      <li><a href="https://explore.ir.msu.edu/documents/EnrollmentReportFall.pdf">MSU Fall 2025 Enrollment Report</a></li>
+      <li><a href="https://msutoday.msu.edu/news/2025/09/fall-2025-enrollment">MSUToday — Fall 2025 enrollment</a></li>
+      <li><a href="https://www.usnews.com/best-colleges/michigan-state-2290">US News — Michigan State University profile</a></li>
+      <li><a href="https://www.collegefactual.com/colleges/michigan-state-university/academic-life/faculty-composition/chart-student-faculty-ratio.html">College Factual — student:faculty ratio</a></li>
+      <li><a href="https://www.lcc.edu/about/locations/east/index.html">Lansing Community College — East Campus</a></li>
+      <li><a href="https://www.collegefactual.com/colleges/michigan-state-university/academic-life/academic-majors/">College Factual — MSU academic majors / degrees awarded</a></li>
+      <li><a href="https://datausa.io/profile/university/michigan-state-university">Data USA — MSU profile</a></li>
+      <li><a href="https://comartsci.msu.edu/advertising-pr-history">MSU ComArtSci — Advertising + PR program history &amp; rankings</a></li>
+      <li><a href="https://psychology.msu.edu/programs/ecological-community/">MSU Psychology — Ecological/Community Psychology program</a></li>
+      <li><a href="https://www.usnews.com/best-graduate-schools/top-medical-schools/michigan-state-university-04135">US News — MSU College of Osteopathic Medicine ranking</a></li>
+    </ul>
+  </div>
+</div>
