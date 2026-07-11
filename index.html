@@ -12,6 +12,7 @@
     --series-1:       #2a78d6; /* blue */
     --series-2:       #1baf7a; /* aqua */
     --series-3:       #eda100; /* yellow */
+    --series-4:       #008300; /* green */
     --series-5:       #4a3aa7; /* violet */
     --status-good:    #0ca30c;
     font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
@@ -34,6 +35,7 @@
       --series-1:       #3987e5;
       --series-2:       #199e70;
       --series-3:       #c98500;
+      --series-4:       #008300;
       --series-5:       #9085e9;
       --status-good:    #0ca30c;
     }
@@ -50,6 +52,7 @@
     --series-1:       #3987e5;
     --series-2:       #199e70;
     --series-3:       #c98500;
+    --series-4:       #008300;
     --status-good:    #0ca30c;
     --series-5:       #9085e9;
   }
@@ -65,6 +68,7 @@
     --series-1:       #2a78d6;
     --series-2:       #1baf7a;
     --series-3:       #eda100;
+    --series-4:       #008300;
     --series-5:       #4a3aa7;
     --status-good:    #0ca30c;
   }
@@ -195,6 +199,112 @@
     line-height: 1.5;
   }
   .note strong { color: var(--text-primary); }
+
+  .campus-map {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 11;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    background: var(--surface-1);
+  }
+  .map-zone-downtown {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 27%;
+    background: var(--gridline);
+    opacity: 0.55;
+  }
+  .map-divider {
+    position: absolute;
+    top: 27%; left: 0; right: 0;
+    height: 0;
+    border-top: 2px dashed var(--baseline);
+  }
+  .map-divider-label {
+    position: absolute;
+    top: calc(27% - 9px);
+    left: 10px;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: .03em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    background: var(--surface-1);
+    padding: 1px 6px;
+    border-radius: 4px;
+  }
+  .map-zone-tag {
+    position: absolute;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: .03em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+  .map-river-label {
+    position: absolute;
+    font-size: 10px;
+    font-style: italic;
+    color: var(--text-muted);
+  }
+  .map-pin {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transform: translate(-50%, -50%);
+    cursor: default;
+  }
+  .map-pin-dot {
+    width: 22px;
+    height: 22px;
+    border-radius: 50% 50% 50% 0;
+    transform: rotate(45deg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+    border: 2px solid var(--surface-1);
+  }
+  .map-pin-dot span {
+    transform: rotate(-45deg);
+    color: #fff;
+    font-size: 10px;
+    font-weight: 700;
+  }
+  .map-pin-label {
+    margin-top: 3px;
+    font-size: 10.5px;
+    font-weight: 600;
+    color: var(--text-primary);
+    background: var(--surface-1);
+    padding: 1px 5px;
+    border-radius: 4px;
+    white-space: nowrap;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.12);
+  }
+  .map-pin[data-tip]:hover::after {
+    content: attr(data-tip);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-bottom: 6px;
+    background: var(--text-primary);
+    color: var(--surface-1);
+    font-size: 11px;
+    font-weight: 500;
+    padding: 6px 9px;
+    border-radius: 6px;
+    white-space: normal;
+    width: max-content;
+    max-width: 200px;
+    z-index: 3;
+    text-align: left;
+    line-height: 1.4;
+  }
 
   .sources { font-size: 12px; color: var(--text-muted); margin-top: 24px; }
   .sources a { color: var(--text-muted); }
@@ -353,6 +463,94 @@
     <p class="note" style="margin-top: 14px;">Note: IPEDS completions data also shows a much larger "Multi-Disciplinary Studies" catch-all category (13,000+ completions) — excluded here since it's an umbrella/general-studies grouping rather than a specific major.</p>
   </div>
 
+  <div class="card">
+    <h2>Notable student spots</h2>
+    <p class="card-sub">Places many students go for classes, food, studying, and hanging out · illustrative layout, not to scale</p>
+
+    <div class="campus-map">
+      <div class="map-zone-downtown"></div>
+      <div class="map-divider"></div>
+      <div class="map-divider-label">Grand River Ave</div>
+      <div class="map-zone-tag" style="top: 6px; right: 10px;">Downtown East Lansing</div>
+      <div class="map-zone-tag" style="bottom: 8px; right: 10px;">MSU Campus</div>
+      <svg viewBox="0 0 100 100" preserveAspectRatio="none" style="position:absolute; inset:0; width:100%; height:100%;">
+        <path d="M 8 68 Q 30 78, 50 68 T 92 60" fill="none" stroke="var(--baseline)" stroke-width="0.6" stroke-dasharray="2,2" opacity="0.6" />
+      </svg>
+      <div class="map-river-label" style="left: 8%; top: 71%;">Red Cedar River</div>
+
+      <!-- Food & Drink -->
+      <div class="map-pin" style="left: 18%; top: 14%;" data-tip="Crunchy's — Grand River Ave burger &amp; bar staple, a go-to quick-meal spot for students.">
+        <div class="map-pin-dot" style="background: var(--series-2);"><span>1</span></div>
+        <div class="map-pin-label">Crunchy's</div>
+      </div>
+      <div class="map-pin" style="left: 52%; top: 18%;" data-tip="El Azteco — Mexican restaurant &amp; tequila bar since 1976, an East Lansing institution near campus.">
+        <div class="map-pin-dot" style="background: var(--series-2);"><span>2</span></div>
+        <div class="map-pin-label">El Azteco</div>
+      </div>
+      <div class="map-pin" style="left: 32%; top: 40%;" data-tip="Sparty's — on-campus convenience/grab-and-go food shops in academic buildings across campus.">
+        <div class="map-pin-dot" style="background: var(--series-2);"><span>3</span></div>
+        <div class="map-pin-label">Sparty's</div>
+      </div>
+
+      <!-- Study spots -->
+      <div class="map-pin" style="left: 80%; top: 12%;" data-tip="Biggby Coffee — Michigan-founded coffee chain, a common study/caffeine stop near campus.">
+        <div class="map-pin-dot" style="background: var(--series-3);"><span>4</span></div>
+        <div class="map-pin-label">Biggby Coffee</div>
+      </div>
+      <div class="map-pin" style="left: 46%; top: 80%;" data-tip="MSU Main Library — the primary library and quiet/group study hub for most majors.">
+        <div class="map-pin-dot" style="background: var(--series-3);"><span>5</span></div>
+        <div class="map-pin-label">MSU Main Library</div>
+      </div>
+
+      <!-- Academic -->
+      <div class="map-pin" style="left: 14%; top: 55%;" data-tip="Wells Hall — one of the largest lecture-hall buildings; hosts many gen-ed and large intro classes.">
+        <div class="map-pin-dot" style="background: var(--series-1);"><span>6</span></div>
+        <div class="map-pin-label">Wells Hall</div>
+      </div>
+      <div class="map-pin" style="left: 72%; top: 58%;" data-tip="Business College Complex — home of the Eli Broad College of Business, MSU's most-completed major.">
+        <div class="map-pin-dot" style="background: var(--series-1);"><span>7</span></div>
+        <div class="map-pin-label">Business College Complex</div>
+      </div>
+
+      <!-- Social / hangout -->
+      <div class="map-pin" style="left: 62%; top: 46%;" data-tip="The Rock — campus landmark on Farm Lane, repainted almost daily by students and student orgs since the 1980s.">
+        <div class="map-pin-dot" style="background: var(--series-4);"><span>8</span></div>
+        <div class="map-pin-label">The Rock</div>
+      </div>
+      <div class="map-pin" style="left: 26%; top: 84%;" data-tip="Beaumont Tower &amp; Sparty Statue — the classic campus landmarks and most popular meet-up/photo spot.">
+        <div class="map-pin-dot" style="background: var(--series-4);"><span>9</span></div>
+        <div class="map-pin-label">Beaumont Tower</div>
+      </div>
+    </div>
+
+    <div class="legend" style="margin-top: 14px; flex-wrap: wrap;">
+      <div class="legend-item"><span class="legend-swatch" style="background: var(--series-1);"></span>Academic / classes</div>
+      <div class="legend-item"><span class="legend-swatch" style="background: var(--series-2);"></span>Food &amp; drink</div>
+      <div class="legend-item"><span class="legend-swatch" style="background: var(--series-3);"></span>Study spot</div>
+      <div class="legend-item"><span class="legend-swatch" style="background: var(--series-4);"></span>Social / hangout</div>
+    </div>
+
+    <button class="table-toggle" id="mapTableToggle" style="margin-top: 12px;" onclick="document.getElementById('mapTableWrap').classList.toggle('open'); this.textContent = document.getElementById('mapTableWrap').classList.contains('open') ? 'Hide table view' : 'View as table';">View as table</button>
+    <div class="table-wrap" id="mapTableWrap">
+      <table class="data-table">
+        <thead>
+          <tr><th>#</th><th>Place</th><th>Category</th><th>Why students go</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>1</td><td>Crunchy's</td><td>Food &amp; drink</td><td>Grand River Ave burger &amp; bar staple</td></tr>
+          <tr><td>2</td><td>El Azteco</td><td>Food &amp; drink</td><td>Iconic Mexican restaurant &amp; tequila bar since 1976</td></tr>
+          <tr><td>3</td><td>Sparty's</td><td>Food &amp; drink</td><td>On-campus convenience/grab-and-go food shops</td></tr>
+          <tr><td>4</td><td>Biggby Coffee</td><td>Study spot</td><td>Michigan-founded coffee chain, popular study stop</td></tr>
+          <tr><td>5</td><td>MSU Main Library</td><td>Study spot</td><td>Primary library and study hub</td></tr>
+          <tr><td>6</td><td>Wells Hall</td><td>Academic / classes</td><td>Largest lecture-hall building for gen-ed classes</td></tr>
+          <tr><td>7</td><td>Business College Complex</td><td>Academic / classes</td><td>Home of the Eli Broad College of Business</td></tr>
+          <tr><td>8</td><td>The Rock</td><td>Social / hangout</td><td>Campus landmark, repainted daily by students</td></tr>
+          <tr><td>9</td><td>Beaumont Tower &amp; Sparty Statue</td><td>Social / hangout</td><td>Classic campus landmarks and meet-up spot</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
   <div class="card" style="margin-top: 16px;">
     <h2>Other East Lansing sites</h2>
     <p class="note"><strong>Lansing Community College – East Campus</strong> (2827 Eyde Pkwy) is a satellite instructional site, not an independent institution — its students, faculty, and housing figures roll up into Lansing Community College as a whole (main campus in downtown Lansing). LCC has no student housing at any site and is a fully commuter institution.</p>
@@ -371,6 +569,10 @@
       <li><a href="https://comartsci.msu.edu/advertising-pr-history">MSU ComArtSci — Advertising + PR program history &amp; rankings</a></li>
       <li><a href="https://psychology.msu.edu/programs/ecological-community/">MSU Psychology — Ecological/Community Psychology program</a></li>
       <li><a href="https://www.usnews.com/best-graduate-schools/top-medical-schools/michigan-state-university-04135">US News — MSU College of Osteopathic Medicine ranking</a></li>
+      <li><a href="https://www.lansing.org/michigan-state-university/restaurants-near-msu/">Restaurants near MSU — Crunchy's &amp; Grand River Ave dining</a></li>
+      <li><a href="https://elazteco.net/">El Azteco East Lansing</a></li>
+      <li><a href="https://eatatstate.msu.edu/campus-dining">MSU Eat at State — campus dining, including Sparty's</a></li>
+      <li><a href="https://en.wikipedia.org/wiki/The_Rock_(Michigan_State_University)">The Rock (Michigan State University) — Wikipedia</a></li>
     </ul>
   </div>
 </div>
